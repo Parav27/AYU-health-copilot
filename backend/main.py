@@ -29,8 +29,10 @@ load_dotenv()
 
 try:
     from routers.reports import router as reports_router  # type: ignore  # noqa: E402
+    from routers.chat import router as chat_router  # type: ignore  # noqa: E402
 except ModuleNotFoundError:
     from backend.routers.reports import router as reports_router  # type: ignore  # noqa: E402
+    from backend.routers.chat import router as chat_router  # type: ignore  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -116,6 +118,7 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
 # ---------------------------------------------------------------------------
 
 app.include_router(reports_router, prefix="/api/v1")
+app.include_router(chat_router, prefix="/api/v1")
 
 
 # ---------------------------------------------------------------------------
