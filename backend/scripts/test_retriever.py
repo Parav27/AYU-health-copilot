@@ -19,7 +19,7 @@ if str(BACKEND_DIR) not in sys.path:
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
-from services.retriever_service import embedding_model_name, retrieve_context
+from backend.services.retriever_service import embedding_model_name, retrieve_context
 
 
 TEST_QUERIES = [

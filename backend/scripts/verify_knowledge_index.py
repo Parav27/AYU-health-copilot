@@ -21,7 +21,7 @@ if str(PROJECT_DIR) not in sys.path:
 
 import chromadb
 
-from services.rag_ingestion_service import (
+from backend.services.rag_ingestion_service import (
     CHROMA_DIR,
     COLLECTION_NAME,
     chunk_documents,

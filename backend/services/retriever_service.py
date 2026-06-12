@@ -12,7 +12,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from services.rag_ingestion_service import (
+from backend.services.rag_ingestion_service import (
     CHROMA_DIR,
     COLLECTION_NAME,
     EMBEDDING_MODEL_NAME,

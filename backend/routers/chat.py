@@ -16,7 +16,7 @@ from fastapi import APIRouter, HTTPException, status
 
 try:
     from schemas.chat_schemas import CHAT_DISCLAIMER, ChatAskResponse, ChatQuestionRequest
-    from services.rag_generation_service import answer_question
+    from backend.services.rag_generation_service import answer_question
 except ModuleNotFoundError:
     from backend.schemas.chat_schemas import CHAT_DISCLAIMER, ChatAskResponse, ChatQuestionRequest
     from backend.services.rag_generation_service import answer_question

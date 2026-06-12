@@ -23,7 +23,7 @@ if str(PROJECT_DIR) not in sys.path:
 
 load_dotenv(BACKEND_DIR / ".env")
 
-from services.rag_generation_service import answer_question
+from backend.services.rag_generation_service import answer_question
 
 
 TEST_QUESTIONS = [

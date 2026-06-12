@@ -19,7 +19,7 @@ if str(BACKEND_DIR) not in sys.path:
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
-from services.rag_ingestion_service import ingest_knowledge_base
+from backend.services.rag_ingestion_service import ingest_knowledge_base
 
 
 def main() -> None:

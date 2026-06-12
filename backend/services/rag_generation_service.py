@@ -11,12 +11,16 @@ from __future__ import annotations
 
 import logging
 import os
+from pathlib import Path
 from typing import Any
 
+from dotenv import load_dotenv
 from groq import Groq
 
-from services.retriever_service import retrieve_context
+env_path = Path(__file__).resolve().parents[1] / ".env"
+load_dotenv(env_path)
 
+from backend.services.retriever_service import retrieve_context
 
 logger = logging.getLogger("ayu.rag_generation")
 
@@ -47,6 +51,7 @@ def _get_client() -> Groq:
         return _client
 
     api_key = os.getenv("GROQ_API_KEY")
+    print("GROQ KEY =", os.getenv("GROQ_API_KEY"))
     if not api_key:
         raise EnvironmentError(
             "GROQ_API_KEY environment variable is not set. "
