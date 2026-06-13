@@ -17,10 +17,15 @@ import logging
 import os
 import re
 import time
+from pathlib import Path
 from typing import Any
 
+from dotenv import load_dotenv
 from groq import Groq
 from pydantic import ValidationError
+
+env_path = Path(__file__).resolve().parents[1] / ".env"
+load_dotenv(env_path)
 
 try:
     from prompts.health_prompts import SYSTEM_PROMPT, build_extraction_prompt
@@ -44,6 +49,7 @@ def _init_client() -> None:
         return
 
     api_key = os.getenv("GROQ_API_KEY")
+    print("REPORT ANALYZER GROQ KEY =", api_key)
     if not api_key:
         raise EnvironmentError(
             "GROQ_API_KEY environment variable is not set. "
