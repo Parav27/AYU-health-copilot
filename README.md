@@ -204,4 +204,4 @@ Users should always consult qualified healthcare professionals regarding medical
 
 ## Author
 
-Built by Bai as a full-stack AI healthcare project using FastAPI, Next.js, Groq, ChromaDB, and Retrieval-Augmented Generation.
+Built by Parav as a full-stack AI healthcare project using FastAPI, Next.js, Groq, ChromaDB, and Retrieval-Augmented Generation.
