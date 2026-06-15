@@ -42,7 +42,20 @@ export interface AnalysisResponse {
   error: string | null;
   disclaimer: string;
 }
+export interface ChatSource {
+  source: string;
+  topic: string;
+  chunk_index: number;
+  similarity_score: number;
+}
 
+export interface ChatResponse {
+  success: boolean;
+  answer: string;
+  sources: ChatSource[];
+  confidence: string;
+  disclaimer: string;
+}
 // ---------------------------------------------------------------------------
 // API calls
 // ---------------------------------------------------------------------------
@@ -69,4 +82,35 @@ export async function analyzeReport(file: File): Promise<AnalysisResponse> {
   }
 
   return response.json() as Promise<AnalysisResponse>;
+}
+
+export async function askAyu(question: string): Promise<ChatResponse> {
+  const response = await fetch(`${API_BASE}/chat/ask`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      question,
+    }),
+  });
+
+  if (!response.ok) {
+    let errorMessage = `Server error: ${response.status}`;
+
+    try {
+      const errorData = await response.json();
+      errorMessage =
+        errorData.detail?.error ||
+        errorData.detail ||
+        errorData.error ||
+        errorMessage;
+    } catch {
+      // ignore
+    }
+
+    throw new Error(errorMessage);
+  }
+
+  return response.json() as Promise<ChatResponse>;
 }

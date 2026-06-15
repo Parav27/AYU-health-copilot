@@ -63,7 +63,7 @@ class ChatAskResponse(BaseModel):
         default_factory=list,
         description="Retrieved knowledge chunks used as context.",
     )
-    confidence: Literal["retrieval_based"] = Field(
+    confidence: Literal["retrieval_based" ,"retrieval_based_report_aware"] = Field(
         "retrieval_based",
         description="Indicates the answer was generated from retrieved context.",
     )

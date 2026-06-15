@@ -19,7 +19,7 @@
  */
 
 import { useState, useCallback, useRef } from "react";
-import { analyzeReport, AnalysisResponse, Biomarker, MetricStatus } from "../../lib/api";
+import { analyzeReport, askAyu, AnalysisResponse, Biomarker, ChatSource, MetricStatus } from "../../lib/api";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -27,21 +27,31 @@ import { analyzeReport, AnalysisResponse, Biomarker, MetricStatus } from "../../
 
 function statusColor(status: MetricStatus): string {
   switch (status) {
-    case "high":      return "bg-rose-50 border-rose-300 text-rose-800";
-    case "low":       return "bg-amber-50 border-amber-300 text-amber-800";
-    case "borderline":return "bg-yellow-50 border-yellow-300 text-yellow-700";
-    case "normal":    return "bg-teal-50 border-teal-200 text-teal-800";
-    default:          return "bg-slate-50 border-slate-200 text-slate-600";
+    case "high":
+      return "bg-rose-50 border-rose-300 text-rose-800";
+    case "low":
+      return "bg-amber-50 border-amber-300 text-amber-800";
+    case "borderline":
+      return "bg-yellow-50 border-yellow-300 text-yellow-700";
+    case "normal":
+      return "bg-teal-50 border-teal-200 text-teal-800";
+    default:
+      return "bg-slate-50 border-slate-200 text-slate-600";
   }
 }
 
 function statusBadge(status: MetricStatus): string {
   switch (status) {
-    case "high":      return "bg-rose-100 text-rose-700";
-    case "low":       return "bg-amber-100 text-amber-700";
-    case "borderline":return "bg-yellow-100 text-yellow-700";
-    case "normal":    return "bg-teal-100 text-teal-700";
-    default:          return "bg-slate-100 text-slate-500";
+    case "high":
+      return "bg-rose-100 text-rose-700";
+    case "low":
+      return "bg-amber-100 text-amber-700";
+    case "borderline":
+      return "bg-yellow-100 text-yellow-700";
+    case "normal":
+      return "bg-teal-100 text-teal-700";
+    default:
+      return "bg-slate-100 text-slate-500";
   }
 }
 
@@ -73,7 +83,9 @@ function BiomarkerCard({ bm }: { bm: Biomarker }) {
     <div className={`rounded-xl border p-4 flex flex-col gap-2 ${statusColor(bm.status)}`}>
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-sm tracking-wide">{bm.name}</h3>
-        <span className={`text-xs font-medium px-2 py-0.5 rounded-full uppercase tracking-wider ${statusBadge(bm.status)}`}>
+        <span
+          className={`text-xs font-medium px-2 py-0.5 rounded-full uppercase tracking-wider ${statusBadge(bm.status)}`}
+        >
           {bm.status}
         </span>
       </div>
@@ -83,9 +95,7 @@ function BiomarkerCard({ bm }: { bm: Biomarker }) {
           {bm.unit && <span className="text-xs opacity-70">{bm.unit}</span>}
         </div>
       )}
-      {bm.reference_range && (
-        <p className="text-xs opacity-60">Ref: {bm.reference_range}</p>
-      )}
+      {bm.reference_range && <p className="text-xs opacity-60">Ref: {bm.reference_range}</p>}
       {bm.plain_explanation && (
         <p className="text-xs leading-relaxed opacity-80 border-t border-current border-opacity-10 pt-2 mt-1">
           {bm.plain_explanation}
@@ -99,12 +109,13 @@ function VitalsStrip({ flags }: { flags: string[] }) {
   if (!flags.length) return null;
   return (
     <div className="w-full bg-rose-700 rounded-xl px-5 py-4">
-      <p className="text-rose-200 text-xs font-semibold uppercase tracking-widest mb-2">
-        Flagged markers
-      </p>
+      <p className="text-rose-200 text-xs font-semibold uppercase tracking-widest mb-2">Flagged markers</p>
       <div className="flex flex-wrap gap-2">
         {flags.map((f) => (
-          <span key={f} className="bg-rose-900 bg-opacity-60 text-rose-100 text-sm font-medium px-3 py-1 rounded-full">
+          <span
+            key={f}
+            className="bg-rose-900 bg-opacity-60 text-rose-100 text-sm font-medium px-3 py-1 rounded-full"
+          >
             {f}
           </span>
         ))}
@@ -135,16 +146,17 @@ function UploadZone({
 
   return (
     <div
-      onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setDragging(true);
+      }}
       onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
       onClick={() => !loading && inputRef.current?.click()}
       className={`
         w-full border-2 border-dashed rounded-2xl p-12 flex flex-col items-center gap-4 
         cursor-pointer transition-all duration-200 select-none
-        ${dragging
-          ? "border-teal-500 bg-teal-50"
-          : "border-slate-300 bg-white hover:border-teal-400 hover:bg-teal-50/40"}
+        ${dragging ? "border-teal-500 bg-teal-50" : "border-slate-300 bg-white hover:border-teal-400 hover:bg-teal-50/40"}
         ${loading ? "opacity-50 cursor-not-allowed" : ""}
       `}
     >
@@ -157,17 +169,24 @@ function UploadZone({
         disabled={loading}
       />
       <div className="w-16 h-16 rounded-2xl bg-teal-700 flex items-center justify-center">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14,2 14,8 20,8"/>
-          <line x1="12" y1="18" x2="12" y2="12"/>
-          <line x1="9" y1="15" x2="15" y2="15"/>
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="white"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14,2 14,8 20,8" />
+          <line x1="12" y1="18" x2="12" y2="12" />
+          <line x1="9" y1="15" x2="15" y2="15" />
         </svg>
       </div>
       <div className="text-center">
-        <p className="font-semibold text-slate-700">
-          {loading ? "Analysing your report…" : "Upload your medical report"}
-        </p>
+        <p className="font-semibold text-slate-700">{loading ? "Analysing your report…" : "Upload your medical report"}</p>
         <p className="text-sm text-slate-500 mt-1">
           {loading ? "Gemini is extracting your health metrics" : "Drag & drop or click · PDF up to 10 MB"}
         </p>
@@ -205,15 +224,26 @@ function ResultsPanel({ result }: { result: AnalysisResponse }) {
     <div className="w-full flex flex-col gap-6">
       {/* Meta bar */}
       <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
-        <span className="bg-slate-100 px-3 py-1 rounded-full font-medium text-slate-700">
-          {result.filename}
+        <span className="bg-slate-100 px-3 py-1 rounded-full font-medium text-slate-700">{result.filename}</span>
+        <span>
+          {result.page_count} page{result.page_count !== 1 ? "s" : ""}
         </span>
-        <span>{result.page_count} page{result.page_count !== 1 ? "s" : ""}</span>
         <span>·</span>
         <span>{r.report_type.replace(/_/g, " ")}</span>
-        {r.lab_name && <><span>·</span><span>{r.lab_name}</span></>}
-        {r.report_date && <><span>·</span><span>{r.report_date}</span></>}
-        <span className={`ml-auto font-medium ${conf.color}`}>
+        {r.lab_name && (
+          <>
+            <span>·</span>
+            <span>{r.lab_name}</span>
+          </>
+        )}
+        {r.report_date && (
+          <>
+            <span>·</span>
+            <span>{r.report_date}</span>
+          </>
+        )}
+        <span className={`ml-auto font-medium ${conf.color}`}
+        >
           {conf.label} ({Math.round(r.extraction_confidence * 100)}%)
         </span>
       </div>
@@ -223,18 +253,14 @@ function ResultsPanel({ result }: { result: AnalysisResponse }) {
 
       {/* Health summary */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-teal-700 mb-3">
-          Health summary
-        </h2>
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-teal-700 mb-3">Health summary</h2>
         <p className="text-slate-700 leading-relaxed text-[15px]">{r.health_summary}</p>
       </div>
 
       {/* Abnormal / borderline markers */}
       {abnormalBiomarkers.length > 0 && (
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">
-            Values requiring attention
-          </h2>
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">Values requiring attention</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {abnormalBiomarkers.map((bm) => (
               <BiomarkerCard key={bm.name} bm={bm} />
@@ -246,9 +272,7 @@ function ResultsPanel({ result }: { result: AnalysisResponse }) {
       {/* Normal markers */}
       {normalBiomarkers.length > 0 && (
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">
-            Normal values
-          </h2>
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">Normal values</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {normalBiomarkers.map((bm) => (
               <BiomarkerCard key={bm.name} bm={bm} />
@@ -260,9 +284,7 @@ function ResultsPanel({ result }: { result: AnalysisResponse }) {
       {/* Educational notes */}
       {r.educational_notes.length > 0 && (
         <div className="bg-teal-900 rounded-2xl p-6 text-white">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-teal-300 mb-4">
-            Educational notes
-          </h2>
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-teal-300 mb-4">Educational notes</h2>
           <ul className="flex flex-col gap-3">
             {r.educational_notes.map((note, i) => (
               <li key={i} className="flex items-start gap-3 text-sm text-teal-100 leading-relaxed">
@@ -289,6 +311,13 @@ export default function Home() {
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Ask AYU state
+  const [question, setQuestion] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatAnswer, setChatAnswer] = useState("");
+  const [chatSources, setChatSources] = useState<ChatSource[]>([]);
+  const [chatError, setChatError] = useState("");
+
   const handleFile = useCallback(async (file: File) => {
     setLoading(true);
     setResult(null);
@@ -302,13 +331,31 @@ export default function Home() {
         setResult(data);
       }
     } catch (err: unknown) {
-      setError(
-        err instanceof Error ? err.message : "Could not connect to the server. Is the backend running?"
-      );
+      setError(err instanceof Error ? err.message : "Could not connect to the server. Is the backend running?");
     } finally {
       setLoading(false);
     }
   }, []);
+
+  const handleAskAyu = useCallback(async () => {
+    const q = question.trim();
+    if (!q) return;
+
+    setChatLoading(true);
+    setChatError("");
+    setChatAnswer("");
+    setChatSources([]);
+
+    try {
+      const response = await askAyu(q);
+      setChatAnswer(response.answer);
+      setChatSources(response.sources);
+    } catch (err: unknown) {
+      setChatError(err instanceof Error ? err.message : "Failed to get response from AYU");
+    } finally {
+      setChatLoading(false);
+    }
+  }, [question]);
 
   return (
     <main className="min-h-screen bg-[#F7F4EF] font-sans">
@@ -326,7 +373,14 @@ export default function Home() {
           </div>
           {result && (
             <button
-              onClick={() => { setResult(null); setError(null); }}
+              onClick={() => {
+                setResult(null);
+                setError(null);
+                setChatAnswer("");
+                setChatSources([]);
+                setChatError("");
+                setQuestion("");
+              }}
               className="text-teal-300 hover:text-white text-sm transition-colors"
             >
               ← New upload
@@ -342,12 +396,13 @@ export default function Home() {
             {/* Hero text */}
             <div className="text-center max-w-xl mx-auto">
               <h1 className="text-3xl font-bold text-slate-800 leading-tight tracking-tight">
-                Understand your<br/>
+                Understand your
+                <br />
                 <span className="text-[#0F4C5C]">medical report</span>
               </h1>
               <p className="text-slate-500 mt-3 text-[15px] leading-relaxed">
-                Upload a blood test or lab report. AYU extracts your health metrics,
-                explains each value in plain language, and highlights anything worth discussing with your doctor.
+                Upload a blood test or lab report. AYU extracts your health metrics, explains each value in
+                plain language, and highlights anything worth discussing with your doctor.
               </p>
             </div>
 
@@ -383,9 +438,60 @@ export default function Home() {
         )}
 
         {result && !loading && (
-          <ResultsPanel result={result} />
+          <div className="flex flex-col gap-8">
+            <ResultsPanel result={result} />
+
+            <div className="bg-white border border-slate-200 rounded-2xl p-6">
+              <h2 className="text-lg font-semibold text-slate-800 mb-4">Ask AYU</h2>
+
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder="What is HbA1c?"
+                  className="flex-1 border border-slate-300 rounded-xl px-4 py-3"
+                />
+
+                <button
+                  onClick={handleAskAyu}
+                  disabled={chatLoading}
+                  className="bg-teal-700 hover:bg-teal-800 text-white px-5 py-3 rounded-xl"
+                >
+                  {chatLoading ? "Thinking..." : "Ask"}
+                </button>
+              </div>
+
+              {chatError && <div className="mt-4 text-rose-600 text-sm">{chatError}</div>}
+
+              {chatAnswer && (
+                <div className="mt-6">
+                  <h3 className="font-semibold mb-2">Answer</h3>
+
+                  <p className="text-slate-700 leading-relaxed">{chatAnswer}</p>
+
+                  {chatSources.length > 0 && (
+                    <div className="mt-4">
+                      <h4 className="font-medium mb-2">Sources</h4>
+
+                      <div className="flex flex-col gap-2">
+                        {chatSources.map((source, index) => (
+                          <div key={index} className="bg-slate-50 rounded-lg px-3 py-2 text-sm">
+                            <strong>{source.source}</strong> {" • "}
+                            {source.topic} {" • "}
+                            score: {source.similarity_score?.toFixed(2)}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </main>
   );
 }
+

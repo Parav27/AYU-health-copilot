@@ -178,6 +178,14 @@ async def analyze_report(
             error=error_message,
         )
 
+    # Phase 6: store latest extracted report in-memory for report-aware chat.
+    try:
+        from backend.services.report_context_service import set_latest_report
+    except ModuleNotFoundError:
+        from backend.services.report_context_service import set_latest_report
+
+    set_latest_report(extracted_report)
+
     logger.info(
         "'%s' analysis complete — confidence: %.2f, biomarkers: %d",
         filename,
@@ -192,6 +200,7 @@ async def analyze_report(
         char_count=char_count,
         report=extracted_report,
     )
+
 
 
 @router.get(

@@ -68,8 +68,14 @@ def extract_health_report(report_text: str) -> ExtractedReport:
     prompt = build_extraction_prompt(report_text)
     raw_response = _call_groq_with_retry(prompt, max_retries=3)
     logger.debug("Raw Groq response length: %d chars", len(raw_response))
+    # Help diagnose cases where biomarkers become empty after parsing/validation
+    try:
+        logger.info("Raw Groq response sample: %s", raw_response[:500])
+    except Exception:
+        pass
 
     extracted = _parse_groq_response(raw_response)
+
     if extracted:
         return extracted
 
@@ -159,16 +165,69 @@ def _fix_trailing_commas(json_str: str) -> str:
     return re.sub(r",\s*([}\]])", r"\1", json_str)
 
 
+def _normalize_extraction_json(data: dict[str, Any]) -> dict[str, Any]:
+    """Normalize LLM output into values accepted by Pydantic enums.
+
+    This is applied BEFORE ExtractedReport(**data) to avoid validation failure
+    that would otherwise drop biomarkers entirely.
+    """
+
+    # ---- report_type normalization ----
+    # Map non-matching categories into schema-supported values.
+    report_type = data.get("report_type")
+    if isinstance(report_type, str):
+        rt = report_type.strip().lower().replace(" ", "_")
+        rt_map = {
+            # Common LLM outputs
+            "comprehensive_metabolic_panel": "blood_test",
+            "cmp": "blood_test",
+            "lipid_panel": "lipid_panel",
+            "thyroid": "thyroid",
+            "diabetes": "diabetes",
+            "blood_test": "blood_test",
+            # allow already-correct values through
+            "blood": "blood_test",
+        }
+        data["report_type"] = rt_map.get(rt, rt)
+
+    # ---- biomarkers normalization ----
+    for bm in data.get("biomarkers", []) or []:
+        if not isinstance(bm, dict):
+            continue
+
+        status = bm.get("status")
+        if isinstance(status, str):
+            s = status.strip().lower().replace(" ", "_")
+            status_map = {
+                "borderline_high": "borderline",
+                "borderline_low": "borderline",
+                "borderline": "borderline",
+                "high": "high",
+                "low": "low",
+                "normal": "normal",
+                "unknown": "unknown",
+            }
+            normalized = status_map.get(s, s)
+
+            if normalized != status:
+                try:
+                    logger.info("Normalizing biomarker status: original=%s normalized=%s", status, normalized)
+                except Exception:
+                    pass
+
+            bm["status"] = normalized
+
+    # ---- abnormal_flags normalization ----
+    # Leave as-is; these are plain strings.
+
+    return data
+
+
 def _validate_and_coerce(data: dict[str, Any]) -> ExtractedReport:
-    """Normalise values and validate against the existing Pydantic schema."""
-    for bm in data.get("biomarkers", []):
-        if isinstance(bm.get("status"), str):
-            bm["status"] = bm["status"].lower()
+    """Normalize values and validate against the existing Pydantic schema."""
+    normalized = _normalize_extraction_json(data)
+    return ExtractedReport(**normalized)
 
-    if isinstance(data.get("report_type"), str):
-        data["report_type"] = data["report_type"].lower().replace(" ", "_")
-
-    return ExtractedReport(**data)
 
 
 def _salvage_partial_response(raw: str) -> ExtractedReport | None:
