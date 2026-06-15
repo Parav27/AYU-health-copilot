@@ -188,7 +188,7 @@ function UploadZone({
       <div className="text-center">
         <p className="font-semibold text-slate-700">{loading ? "Analysing your report…" : "Upload your medical report"}</p>
         <p className="text-sm text-slate-500 mt-1">
-          {loading ? "Gemini is extracting your health metrics" : "Drag & drop or click · PDF up to 10 MB"}
+          {loading ? "AI is extracting your health metrics" : "Drag & drop or click · PDF up to 10 MB"}
         </p>
       </div>
       {!loading && (
@@ -416,7 +416,7 @@ export default function Home() {
             <UploadZone onFile={handleFile} loading={loading} />
             <div className="text-center text-slate-500 text-sm">
               <p>Extracting text from your PDF…</p>
-              <p className="mt-1">Asking Gemini to identify your health markers…</p>
+              <p className="mt-1">Asking AI to identify your health markers…</p>
               <p className="mt-1 text-teal-600 font-medium">This usually takes 10–20 seconds.</p>
             </div>
           </div>

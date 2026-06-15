@@ -1,7 +1,7 @@
 """
 health_prompts.py
 -----------------
-Prompt templates for AYU's Gemini integration.
+Prompt templates for AYU's AI integration.
 
 Why a dedicated prompts module?
   - Prompts are configuration, not code — isolating them makes tuning fast.
@@ -48,7 +48,7 @@ def build_extraction_prompt(report_text: str) -> str:
     """
     Build the prompt that extracts structured biomarker data from raw PDF text.
 
-    The prompt uses a concrete JSON schema example so Gemini understands the exact
+    The prompt uses a concrete JSON schema example so AI understands the exact
     shape expected. The model is instructed to reason step-by-step internally before
     writing the JSON (this reduces hallucination on edge cases).
 
@@ -56,9 +56,9 @@ def build_extraction_prompt(report_text: str) -> str:
         report_text: Cleaned text extracted from the uploaded PDF.
 
     Returns:
-        Complete prompt string ready to be sent to Gemini.
+        Complete prompt string ready to be sent to AI.
     """
-    # Truncate to ~12,000 characters to stay well within Gemini's context window
+    # Truncate to ~12,000 characters to stay well within AI's context window
     # while leaving headroom for the prompt itself and the JSON response.
     MAX_TEXT_CHARS = 12_000
     if len(report_text) > MAX_TEXT_CHARS:

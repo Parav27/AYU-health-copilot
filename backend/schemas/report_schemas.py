@@ -5,7 +5,7 @@ Pydantic models for the AYU health report pipeline.
 
 These schemas serve three purposes:
   1. Validate incoming requests (FastAPI auto-validates)
-  2. Define the exact JSON structure Gemini must return
+  2. Define the exact JSON structure AI must return
   3. Type the API response the frontend consumes
 
 Design rule: every field has a description so the schema doubles as documentation.
