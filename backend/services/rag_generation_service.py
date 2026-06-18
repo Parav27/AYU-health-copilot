@@ -15,7 +15,11 @@ from typing import Any
 
 from groq import Groq
 
-from backend.services.retriever_service import retrieve_context
+try:
+    from services.retriever_service import retrieve_context
+except ModuleNotFoundError:
+    from backend.services.retriever_service import retrieve_context
+
 
 logger = logging.getLogger("ayu.rag_generation")
 

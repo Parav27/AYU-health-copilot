@@ -12,12 +12,21 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from backend.services.rag_ingestion_service import (
-    CHROMA_DIR,
-    COLLECTION_NAME,
-    EMBEDDING_MODEL_NAME,
-    get_embedding_model,
-)
+try:
+    from services.rag_ingestion_service import (
+        CHROMA_DIR,
+        COLLECTION_NAME,
+        EMBEDDING_MODEL_NAME,
+        get_embedding_model,
+    )
+except ModuleNotFoundError:
+    from backend.services.rag_ingestion_service import (
+        CHROMA_DIR,
+        COLLECTION_NAME,
+        EMBEDDING_MODEL_NAME,
+        get_embedding_model,
+    )
+
 
 
 DEFAULT_K = 3

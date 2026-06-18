@@ -23,6 +23,7 @@ except ModuleNotFoundError:
     from backend.schemas.report_schemas import ExtractedReport
 
 
+
 _lock = threading.Lock()
 _latest_report: ExtractedReport | None = None
 
