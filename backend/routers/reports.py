@@ -24,8 +24,8 @@ from fastapi.responses import JSONResponse
 
 try:
     from schemas.report_schemas import AnalysisResponse
-    from backend.services.groq_service import extract_health_report
-    from backend.services.pdf_service import extract_text_from_bytes
+    from services.groq_service import extract_health_report
+    from services.pdf_service import extract_text_from_bytes
 except ModuleNotFoundError:
     from backend.schemas.report_schemas import AnalysisResponse
     from backend.services.groq_service import extract_health_report
