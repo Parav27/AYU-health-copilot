@@ -179,8 +179,9 @@ async def analyze_report(
         )
 
     # Phase 6: store latest extracted report in-memory for report-aware chat.
+
     try:
-        from backend.services.report_context_service import set_latest_report
+        from services.report_context_service import set_latest_report
     except ModuleNotFoundError:
         from backend.services.report_context_service import set_latest_report
 
