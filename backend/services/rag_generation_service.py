@@ -77,6 +77,7 @@ def answer_question(question: str) -> dict[str, Any]:
             "confidence": "retrieval_based" (or retrieval_based_report_aware)
         }
     """
+    logger.info("answer_question called")
     cleaned_question = question.strip()
     if not cleaned_question:
         raise ValueError("Question must not be empty.")

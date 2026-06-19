@@ -37,6 +37,7 @@ def _load_vector_store(
     persist_directory: Path = CHROMA_DIR,
     collection_name: str = COLLECTION_NAME,
 ):
+
     """Load the existing ChromaDB collection with the same embedding model."""
     global _VECTOR_STORE
     if _VECTOR_STORE is not None:
@@ -55,6 +56,7 @@ def _load_vector_store(
         persist_directory=str(persist_directory),
         embedding_function=get_embedding_model(),
     )
+
     return _VECTOR_STORE
 
 
