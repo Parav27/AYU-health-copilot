@@ -16,11 +16,8 @@ from fastapi import APIRouter, HTTPException, status
 
 try:
     from schemas.chat_schemas import CHAT_DISCLAIMER, ChatAskResponse, ChatQuestionRequest
-    from services.rag_generation_service import answer_question
 except ModuleNotFoundError:
     from backend.schemas.chat_schemas import CHAT_DISCLAIMER, ChatAskResponse, ChatQuestionRequest
-    from backend.services.rag_generation_service import answer_question
-
 
 logger = logging.getLogger("ayu.router.chat")
 
@@ -72,6 +69,11 @@ async def ask_chat_question(payload: ChatQuestionRequest) -> ChatAskResponse:
     Validation for missing, empty, or very short questions is handled by the
     request schema before this function runs.
     """
+    try:
+        from services.rag_generation_service import answer_question
+    except ModuleNotFoundError:
+        from backend.services.rag_generation_service import answer_question
+        
     try:
         result = answer_question(payload.question)
     except ValueError as exc:
