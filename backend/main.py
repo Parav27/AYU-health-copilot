@@ -79,9 +79,9 @@ app = FastAPI(
 # ---------------------------------------------------------------------------
 
 ALLOWED_ORIGINS = [
-    "http://localhost:3000",   # Next.js dev
+    "http://localhost:3000",
     "http://127.0.0.1:3000",
-    os.getenv("FRONTEND_URL", "http://localhost:3000"),
+    "https://ayu-health-copilot.vercel.app",
 ]
 
 app.add_middleware(
